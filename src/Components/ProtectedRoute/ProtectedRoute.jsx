@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom'
 
 function ProtectedRoute(props) {
 
-    if(localStorage.getItem('userToken') !== null){
+    if(localStorage.getItem('Authorization') !== null){
         return props.children
     }
     else{

@@ -33,18 +33,18 @@ export default function Navbar() {
               Home
             </Link>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <Link className="nav-link" to="about">
               About
             </Link>
-          </li>
+          </li> */}
           <li className="nav-item">
             <Link className="nav-link" to="animals">
               Animals
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="mating">
+            <Link className="nav-link" to="matingTable">
               Mating
             </Link>
           </li>

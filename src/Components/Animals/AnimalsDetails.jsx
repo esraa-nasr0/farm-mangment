@@ -3,9 +3,11 @@ import React, {  useState } from 'react';
 import axios from 'axios';
 // import * as Yup from 'yup';
 import { IoIosSave } from "react-icons/io";
+import { useNavigate } from 'react-router-dom';
 
 export default function AnimalsDetails() {
 
+    let navigate = useNavigate();
     const [error ,setError] = useState(null);
     const [isLoading , setisLoading] = useState(false);
     let Authorization = localStorage.getItem('Authorization')
@@ -20,14 +22,15 @@ export default function AnimalsDetails() {
         try {
             let { data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/animal/addanimal`, value, 
             { headers });
-            // console.log(value);  
+            console.log(value);  
             // console.log(headers);  
             if (data.status === "success") {
                 setisLoading(false);
+                navigate('/animals')
             }
         } catch (err) {
             setisLoading(false);
-            setError(err.response?.data?.message || "An unknown error occurred");
+            setError(err.response?.data?.message );
             console.log(err.response.data);  
         }
     }
@@ -68,7 +71,7 @@ export default function AnimalsDetails() {
         locationShed: '',
         femaleCondation: '',
         animaleCondation: '',
-        tarderName: '',
+        traderName: '',
         purchaseDate: '',
         purchasePrice: '',
         teething: '',
@@ -160,17 +163,17 @@ export default function AnimalsDetails() {
 
         {formik.values.animaleCondation === 'purchase' && (<>
         <div className="input-box">
-        <label className="label" htmlFor="tarderName">Trader Name</label>
+        <label className="label" htmlFor="traderName">Trader Name</label>
         <input
             onBlur={formik.handleBlur}
             onChange={formik.handleChange}
-            value={formik.values.tarderName}
+            value={formik.values.traderName}
             placeholder="Enter Trader Name"
-            id="tarderName"
+            id="traderName"
             type="text"
             className="input2"
-            name="tarderName"/>
-            {formik.errors.tarderName && formik.touched.tarderName && (<p className="text-danger">{formik.errors.tarderName}</p>)}
+            name="traderName"/>
+            {formik.errors.traderName && formik.touched.traderName && (<p className="text-danger">{formik.errors.traderName}</p>)}
         </div>
 
         <div className="input-box">

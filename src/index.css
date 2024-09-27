@@ -122,7 +122,13 @@ code {
 }
 
 /* animals */
-
+.animal{
+  margin-top: 195px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 80px 0 0;
+}
 .animals{
   display: flex;
   flex-wrap: wrap;

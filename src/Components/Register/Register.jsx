@@ -12,22 +12,22 @@ export default function Register() {
   const [isLoading , setisLoading] = useState(false);
 
   async function submitRegister(value) {
-      setisLoading(true);
-
-      let {data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/register`, value)
-      .catch((err)=>{
+    setisLoading(true);
+    try {
+      let { data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/register`, value);
+      if (data.status === "success") {
         setisLoading(false);
-        setError(err.response.data.message)
-
-      // console.log(err.response.data.message)
+        navigate('/login');
       }
-      
-    )
-      if(data.status === "success" ){
-        setisLoading(false);
-        navigate('/login')
-      }
+    } catch (err) {
+      setisLoading(false);
+      console.log(err.response?.data); // Log the entire error response from the server
+      setError(err.response?.data?.message || "A network error occurred");
+    }
+    
   }
+  
+
   
 
 
@@ -65,17 +65,19 @@ export default function Register() {
     
 
     let formik = useFormik({
-    initialValues:{
-        name:'',
-        email:'',
-        phone:'',
-        password:'',
-        confirmpassword:'',
-        usertype:'',
-        country:'',
-    },validationSchema:validation,
-    onSubmit:submitRegister
-    })
+      initialValues: {
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        confirmpassword: '',
+        usertype: '',  // Ensure 'usertype' is correctly initialized
+        country: '',
+      },
+      validationSchema: validation,
+      onSubmit: submitRegister
+    });
+    
 
     return <>
     <div className="body">
@@ -104,7 +106,7 @@ export default function Register() {
 
           <div className="input-box">
             <label className="label" htmlFor="country">Country</label>
-            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.country} placeholder="Enter your Country" id="country" type="country" className="input" name="country"/>
+            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.country} placeholder="Enter your Country" id="country" type="text" className="input" name="country"/>
             {formik.errors.country && formik.touched.country?<p className="text-danger">{formik.errors.country}</p>:""}
           </div>
 
@@ -126,7 +128,7 @@ export default function Register() {
               aria-label="Default select example">
                       <option value="" >user type </option>
                       <option value="farm" >farm </option>
-                      <option value="tarder" >tarder</option>
+                      <option value="trader" >trader</option>
                   
                   </select>
           </div>

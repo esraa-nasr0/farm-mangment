@@ -9,7 +9,7 @@ import'@fortawesome/fontawesome-free/css/all.min.css';
 import './index.css';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import UserContextProvider from './Context/UserContext';
-
+// import{ReactQueryDevtools} from 'react-query/devtools'
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -21,6 +21,7 @@ root.render(
     <QueryClientProvider client={queryClient}>
         <UserContextProvider>
         <App />
+        {/* <ReactQueryDevtools initialIsOpen="false" position='bottom-right'  /> */}
         </UserContextProvider>
     </QueryClientProvider>
     

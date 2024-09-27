@@ -1,81 +1,122 @@
+import axios from 'axios';
 import { useFormik } from 'formik'
 import React, { useState } from 'react'
-import * as Yup from "yup";
 import { IoIosSave } from "react-icons/io";
 
 
-
 function Mating() {
+    const [showAlert, setShowAlert] = useState(false);
+    const [error, setError] = useState(null);
+    const [isLoading, setisLoading] = useState(false);
+    const [matingData, setMatingData] = useState(null);
 
-    const [showAlert , setShowAlert] = useState(false)
-    
-    function submitMating(value) {
-        console.log(value);
-        setShowAlert(true);
+    let Authorization = localStorage.getItem('Authorization');
+    let headers = {
+        Authorization: `Bearer ${Authorization}`
+    };
+
+    async function submitMating(value) {
+        setisLoading(true); 
+        try {
+            let { data } = await axios.post(
+                `https://farm-project-bbzj.onrender.com/api/mating/addmating`,
+                value,
+                { headers }
+            );console.log('Submitting form with values:', value);
+            console.log('Headers:', headers);
+            console.log('Response:', data);
+
+            if (data.status === "success") {
+                setisLoading(false);
+                setMatingData(data.data.mating);  // Access the mating data correctly
+                setShowAlert(true);  // Show the alert with the delivery date
+            }
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || "An error occurred while processing your request";
+            setError(errorMessage);
+            console.log(err.response?.data);
+        }
+        
     }
+    
 
-    let validation = Yup.object({
-        tagId:Yup.string().max(10,'tag ID maxlength is 10').required('tag ID is required'),
-        matingType:Yup.string().required('Mating Type is required '),
-        maleTagId:Yup.string().max(10,'Male ID maxlength is 10').required('Male ID is required'),
-        matingDate:Yup.date().required('Mating Date is required '),
-        sonarDate:Yup.date().required('Sonar Date is required '),
-        sonarRsult:Yup.string().required('Sonar Rsult is required '),
+    let formik = useFormik({
+        initialValues: {
+            tagId: '',
+            matingType: '',
+            maleTag_id: '',
+            matingDate: '',
+            sonarDate: '',
+            sonarRsult: '',
+        },
+        onSubmit: submitMating
     });
 
-let formik = useFormik({
-    initialValues:{
-        tagId:'',
-        matingType:'',
-        maleTagId:'',
-        matingDate:'',
-        sonarDate:'',
-        sonarRsult:'',
-    },validationSchema:validation,
-    onSubmit:submitMating
-});
+    return (
+        <>
+            <div className="container">
+                <div className="title2">Mating</div>
+                <p className="text-danger">{error}</p>
+                <form onSubmit={formik.handleSubmit} className="mt-5">
 
+                    {isLoading ? (
+                        <button type="submit" className="btn btn-dark button2" disabled>
+                        <i className="fas fa-spinner fa-spin"></i>
+                        </button>
+                    ) : (
+                        <button type="submit" className="btn btn-dark button2">
+                            <IoIosSave /> Save
+                        </button>
+                    )}
 
-return <>
-<div className="container">
-<div className="title2">Mating</div>
+    <div className="animaldata">
 
-<form onSubmit={formik.handleSubmit} className='mt-5'>
-    
-    
-<button disabled={!(formik.isValid && formik.dirty)}  type="submit" className="btn btn-dark button2 ">
-            <IoIosSave /> Save
-        </button>   
-
-        <div className="animaldata">
-            
-        <div className="input-box">
+    <div className="input-box">
         <label className="label" htmlFor="tagId">Tag ID</label>
-            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.tagId} placeholder="Enter your Tag ID" id="tagId" type="text" className="input2" name="tagId"/>
-            {formik.errors.tagId && formik.touched.tagId?<p className="text-danger">{formik.errors.tagId}</p>:""}
-        </div>
-        
-        <div className="input-box">
-            <label className="label" htmlFor='matingType'>Mating Type</label>
-            <select 
-            value={formik.values.matingType}
-            onChange={formik.handleChange} 
-            onBlur={formik.handleBlur}  
-            className=" input2" 
-            name='matingType' 
-            id='matingType' 
-            aria-label="Default select example">
-                    <option value="" >Mating Type { }</option>
-                    <option value="Natural" >Natural { }</option>
-                </select>
-                {formik.errors.matingType && formik.touched.matingType?<p className="text-danger">{formik.errors.matingType}</p>:""}
-        </div>
-        
-        <div className="input-box">
-        <label className="label" htmlFor="maleTagId">Male Tag ID</label>
-            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.maleTagId} placeholder="Enter your Male Tag ID" id="maleTagId" type="text" className="input2" name="maleTagId"/>
-            {formik.errors.maleTagId && formik.touched.maleTagId?<p className="text-danger">{formik.errors.maleTagId}</p>:""}
-        </div>
+        <input
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.tagId}
+            placeholder="Enter your Tag ID"
+            id="tagId"
+            type="text"
+            className="input2"
+            name="tagId"/>
+            {formik.errors.tagId && formik.touched.tagId ? <p className="text-danger">{formik.errors.tagId}</p> : ""}
+                        </div>
+
+                        {/* Mating Type */}
+                        <div className="input-box">
+                            <label className="label" htmlFor="matingType">Mating Type</label>
+                            <select
+                                value={formik.values.matingType}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                className="input2"
+                                name="matingType"
+                                id="matingType"
+                            >
+                                <option value="" >Mating Type</option>
+                                <option value="Natural">Natural</option>
+                            </select>
+                            {formik.errors.matingType && formik.touched.matingType ? <p className="text-danger">{formik.errors.matingType}</p> : ""}
+                        </div>
+
+                        {/* Male Tag ID */}
+                        <div className="input-box">
+                            <label className="label" htmlFor="maleTag_id">Male Tag ID</label>
+                            <input
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.maleTag_id}
+                                placeholder="Enter your Male Tag ID"
+                                id="maleTag_id"
+                                type="text"
+                                className="input2"
+                                name="maleTag_id"
+                            />
+                            {formik.errors.maleTag_id && formik.touched.maleTag_id ? <p className="text-danger">{formik.errors.maleTag_id}</p> : ""}
+                        </div>
 
         <div className="input-box">
         <label className="label" htmlFor="matingDate">Mating Date</label>
@@ -89,17 +130,40 @@ return <>
             {formik.errors.sonarDate && formik.touched.sonarDate?<p className="text-danger">{formik.errors.sonarDate}</p>:""}
         </div>
 
-        <div className="input-box">
-        <label className="label" htmlFor="sonarRsult">Sonar Rsult</label>
-            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.sonarRsult}  id="sonarRsult" placeholder="Enter your Sonar Rsult" type="text" className="input2" name="sonarRsult"/>
-            {formik.errors.sonarRsult && formik.touched.sonarRsult?<p className="text-danger">{formik.errors.sonarRsult}</p>:""}
-        </div>
 
-        </div>
-</form>
-        {showAlert && <div className='alert mt-5 p-4 alert-info '>Expected Delivery Date:</div> }
-</div>
-</>
+                        {/* Sonar Result */}
+                        <div className="input-box">
+                            <label className="label" htmlFor="sonarRsult">Sonar Result</label>
+                            <select
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                value={formik.values.sonarRsult}
+                                id="sonarRsult"
+                                className="input2"
+                                name="sonarRsult"
+                            >
+                                <option value="" disabled>Select Sonar Result</option>
+                                <option value="positive">Positive</option>
+                                <option value="negative">Negative</option>
+                            </select>
+                            {formik.errors.sonarRsult && formik.touched.sonarRsult ? (
+                                <p className="text-danger">{formik.errors.sonarRsult}</p>
+                            ) : ""}
+                        </div>
+
+                    </div>
+                </form>
+
+                {/* Expected Delivery Date Alert */}
+                {showAlert && matingData && matingData.expectedDeliveryDate && (
+    <div className="alert mt-5 p-4 alert-info">
+        Expected Delivery Date: {new Date(matingData.expectedDeliveryDate).toLocaleDateString()}
+    </div>
+)}
+
+            </div>
+        </>
+    );
 }
 
-export default Mating
+export default Mating;
