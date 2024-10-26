@@ -10,6 +10,7 @@ function Mating() {
     const [isLoading, setisLoading] = useState(false);
     const [matingData, setMatingData] = useState(null);
 
+
     let Authorization = localStorage.getItem('Authorization');
     let headers = {
         Authorization: `Bearer ${Authorization}`
@@ -57,14 +58,21 @@ function Mating() {
             <div className="container">
                 <div className="title2">Mating</div>
                 <p className="text-danger">{error}</p>
+                
+                {/* Expected Delivery Date Alert */}
+                {showAlert && matingData && matingData.expectedDeliveryDate && (
+    <div className="alert mt-5 p-4  alert-success">
+        Expected Delivery Date: {new Date(matingData.expectedDeliveryDate).toLocaleDateString()}
+    </div>
+)}
                 <form onSubmit={formik.handleSubmit} className="mt-5">
 
                     {isLoading ? (
-                        <button type="submit" className="btn btn-dark button2" disabled>
+                        <button type="submit" className="btn  button2" disabled>
                         <i className="fas fa-spinner fa-spin"></i>
                         </button>
                     ) : (
-                        <button type="submit" className="btn btn-dark button2">
+                        <button type="submit" className="btn  button2">
                             <IoIosSave /> Save
                         </button>
                     )}
@@ -154,12 +162,6 @@ function Mating() {
                     </div>
                 </form>
 
-                {/* Expected Delivery Date Alert */}
-                {showAlert && matingData && matingData.expectedDeliveryDate && (
-    <div className="alert mt-5 p-4 alert-info">
-        Expected Delivery Date: {new Date(matingData.expectedDeliveryDate).toLocaleDateString()}
-    </div>
-)}
 
             </div>
         </>

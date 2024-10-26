@@ -3,13 +3,17 @@ import { useFormik } from 'formik';
 import axios from 'axios';
 import { IoIosSave } from "react-icons/io";
 import { useNavigate, useParams } from 'react-router-dom';
+import ViewAnimalMating from './ViewAnimalMating';
+import ViewAnimalWeight from './ViewAnimalWeight';
 
 function EditAnimal() {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isDataLoaded, setIsDataLoaded] = useState(false); // Flag to check if data is loaded
-    const { id } = useParams(); // Get the animal ID from the URL params
-    let navigate = useNavigate();
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
+    const [animalData, setAnimalData] = useState(null);
+    const [showAlert, setShowAlert] = useState(false);
+
+    const { id } = useParams();
 
     let Authorization = localStorage.getItem('Authorization');
 
@@ -25,11 +29,12 @@ function EditAnimal() {
                 values,
                 { headers }
             );
-            console.log(data);
             setError(null);
             if (data.status === "success") {
+                console.log(data);
                 setIsLoading(false);
-                navigate('/animals');
+                setAnimalData(data.data.animal);
+                setShowAlert(true);  // Show the alert with the delivery date
             }
         } catch (error) {
             console.error("Failed to edit animal:", error);
@@ -38,24 +43,54 @@ function EditAnimal() {
         }
     }
 
+    const formik = useFormik({
+        initialValues: {
+            tagId: '',
+            animalType: '',
+            breed: '',
+            gender: '',
+            motherId: '',
+            fatherId: '',
+            birthDate: '',
+            locationShed: '',
+            female_Condition: '',
+            animaleCondation: '',
+            traderName: '',
+            purchaseDate: '',
+            purchasePrice: '',
+            teething: '',
+        },
+        onSubmit: editAnimals
+    });
+
     // Fetch the current animal details to set initial form values
     useEffect(() => {
         async function fetchAnimal() {
             try {
                 let { data } = await axios.get(
                     `https://farm-project-bbzj.onrender.com/api/animal/getsinglanimals/${id}`, 
-                    { headers } );
-                // console.log( data); 
-                // Check if `data.data.animal` exists and then set form values
+                    { headers }
+                );
+                const formatDate = (dateString) => dateString ? new Date(dateString).toISOString().split('T')[0] : '';
+    
                 if (data && data.data && data.data.animal) {
                     formik.setValues({
                         tagId: data.data.animal.tagId || '',
                         breed: data.data.animal.breed || '',
                         animalType: data.data.animal.animalType || '',
-                        gender: data.data.animal.gender || '',
-                        femaleCondation: data.data.animal.femaleCondation || '',
+                        gender: (data.data.animal.gender || '').toLowerCase(), // Normalize value to lowercase
+                        female_Condition: data.data.animal.female_Condition || '',
+                        motherId: data.data.animal.motherId || '',
+                        fatherId: data.data.animal.fatherId || '',
+                        birthDate: formatDate(data.data.animal.birthDate || ''),
+                        locationShed: data.data.animal.locationShed || '',
+                        animaleCondation: data.data.animal.animaleCondation || '',
+                        traderName: data.data.animal.traderName || '',
+                        purchaseDate: formatDate(data.data.animal.purchaseDate || ''),
+                        purchasePrice: data.data.animal.purchasePrice || '',
+                        teething: data.data.animal.teething || '',
                     });
-                    setIsDataLoaded(true); 
+                    setIsDataLoaded(true);  // Set flag after values are updated
                 } else {
                     throw new Error("Unexpected API response structure");
                 }
@@ -67,32 +102,35 @@ function EditAnimal() {
         fetchAnimal();
     }, [id]);
 
-    const formik = useFormik({
-        initialValues: {
-            tagId: '',
-            animalType: '',
-            breed: '',
-            gender: '',
-            femaleCondation: '' 
-        },
-        onSubmit: editAnimals
-    });
+    // Update female_Condition field when gender changes
+    useEffect(() => {
+        if (formik.values.gender === "female") {
+            formik.setFieldValue('female_Condition', formik.values.female_Condition || '');
+        }
+    }, [formik.values.gender]);
 
     if (!isDataLoaded) {
-        return <div>Loading...</div>; // Show loading state while data is being fetched
+        return <div>Loading...</div>;
     }
+
 
     return (
         <div className="container">
             <div className="title2">Edit Animals</div>
             <p className="text-danger">{error}</p>
+            
+    {showAlert && animalData && (  
+    <div className="alert mt-5 p-4 alert-success">  
+    Animal Age In Days: {animalData.ageInDays} {/* Display the specific data */}  
+    </div>  
+    )}  
             <form onSubmit={formik.handleSubmit} className='mt-5'>
                 {isLoading ? (
-                    <button type="submit" className="btn btn-dark button2" disabled>
+                    <button type="submit" className="btn  button2" disabled>
                         <i className="fas fa-spinner fa-spin"></i>
                     </button>
                 ) : (
-                    <button type="submit" className="btn btn-dark button2">
+                    <button type="submit" className="btn  button2">
                         <IoIosSave /> Save
                     </button>
                 )}
@@ -150,7 +188,6 @@ function EditAnimal() {
                             <p className="text-danger">{formik.errors.animalType}</p>
                         )}
                     </div>
-
                     <div className="input-box">
                         <label className="label" htmlFor="gender">Gender</label>
                         <select
@@ -162,7 +199,7 @@ function EditAnimal() {
                             id="gender"
                         >
                             <option value="">Gender</option>
-                            <option value="female">Female</option>
+                            <option value="female">Female</option>  
                             <option value="male">Male</option>
                         </select>
                         {formik.errors.gender && formik.touched.gender && (
@@ -172,25 +209,128 @@ function EditAnimal() {
 
                     {formik.values.gender === 'female' && (
                         <div className="input-box">
-                            <label className="label" htmlFor="femaleCondation">Female Condition</label>
+                            <label className="label" htmlFor="female_Condition">Female Condition</label>
                             <input 
                                 onBlur={formik.handleBlur} 
                                 onChange={formik.handleChange} 
-                                value={formik.values.femaleCondation} 
+                                value={formik.values.female_Condition} 
                                 placeholder="Enter your Female Condition" 
-                                id="femaleCondation" 
+                                id="female_Condition" 
                                 type="text" 
                                 className="input2" 
-                                name="femaleCondation"
+                                name="female_Condition"
                             />
-                            {formik.errors.femaleCondation && formik.touched.femaleCondation && (
-                                <p className="text-danger">{formik.errors.femaleCondation}</p>
+                            {formik.errors.female_Condition && formik.touched.female_Condition && (
+                                <p className="text-danger">{formik.errors.female_Condition}</p>
                             )}
                         </div>
                     )}
+                    
+        <div className="input-box">
+        <label className="label" htmlFor="animaleCondation">Animal Condition</label>
+        <select
+            value={formik.values.animaleCondation}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className="input2"
+            name="animaleCondation"
+            id="animaleCondation">
+        <option value="">Animal Condition</option>
+        <option value="purchase">Purchase</option>
+        <option value="born at farm">Born at Farm</option>
+        </select>
+        {formik.errors.animaleCondation && formik.touched.animaleCondation && (<p className="text-danger">{formik.errors.animaleCondation}</p>)}
+        </div>
+
+        {formik.values.animaleCondation === 'purchase' && (<>
+        <div className="input-box">
+        <label className="label" htmlFor="traderName">Trader Name</label>
+        <input
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.traderName}
+            placeholder="Enter Trader Name"
+            id="traderName"
+            type="text"
+            className="input2"
+            name="traderName"/>
+            {formik.errors.traderName && formik.touched.traderName && (<p className="text-danger">{formik.errors.traderName}</p>)}
+        </div>
+
+        <div className="input-box">
+        <label className="label" htmlFor="purchaseDate">Purchase Date</label>
+        <input
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.purchaseDate}
+            id="purchaseDate"
+            type="date"
+            className="input2"
+            name="purchaseDate"/>
+            {formik.errors.purchaseDate && formik.touched.purchaseDate && (<p className="text-danger">{formik.errors.purchaseDate}</p>)}
+        </div>
+
+        <div className="input-box">
+        <label className="label" htmlFor="purchasePrice">Purchase Price</label>
+        <input
+            onBlur={formik.handleBlur}
+            onChange={formik.handleChange}
+            value={formik.values.purchasePrice}
+            placeholder="Enter Purchase Price"
+            id="purchasePrice"
+            type="number"
+            className="input2"
+            name="purchasePrice"
+            />
+            {formik.errors.purchasePrice && formik.touched.purchasePrice && (<p className="text-danger">{formik.errors.purchasePrice}</p>)}
+        </div>
+                            
+        <div className="input-box">
+        <label className="label" htmlFor="teething">Teething</label>
+        <select
+            value={formik.values.teething}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur} className="input2" name="teething" id="teething">
+            <option value="">Teething</option>
+            <option value="two">Two</option>
+            <option value="four">Four</option>
+            <option value="six">Six</option>
+            </select>
+            {formik.errors.teething && formik.touched.teething && (<p className="text-danger">{formik.errors.teething}</p>)}
+            </div></>)}
+
+        {formik.values.animaleCondation === 'born at farm' && (<>
+        <div className="input-box">
+            <label className="label" htmlFor="motherId">Mother ID</label>
+            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.motherId} placeholder="Enter your Mother ID" id="motherId" type="text" className="input2" name="motherId"/>
+            {formik.errors.motherId && formik.touched.motherId?<p className="text-danger">{formik.errors.motherId}</p>:""}
+        </div>
+
+        <div className="input-box">
+            <label className="label" htmlFor="fatherId">Father ID</label>
+            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.fatherId} placeholder="Enter your Father ID" id="fatherId" type="text" className="input2" name="fatherId"/>
+            {formik.errors.fatherId && formik.touched.fatherId?<p className="text-danger">{formik.errors.fatherId}</p>:""}
+        </div>
+
+        <div className="input-box">
+            <label className="label" htmlFor="birthDate">Birth Date</label>
+            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.birthDate}  id="birthDate" type="date" className="input2" name="birthDate"/>
+            {formik.errors.birthDate && formik.touched.birthDate?<p className="text-danger">{formik.errors.birthDate}</p>:""}
+        </div> 
+                    </>)}
+                    
+
+            <div className="input-box">  
+            <label className="label" htmlFor="locationShed">Location Shed</label>
+            <input onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.locationShed} placeholder="Enter your Location Shed" id="locationShed" type="text" className="input2" name="locationShed"/>
+            {formik.errors.locationShed && formik.touched.locationShed?<p className="text-danger">{formik.errors.locationShed}</p>:""}
+            </div>
                 </div>
             </form>
+            <ViewAnimalMating animalId={id}/>
+            <ViewAnimalWeight animalId={id}/>
         </div>
+
     );
 }
 

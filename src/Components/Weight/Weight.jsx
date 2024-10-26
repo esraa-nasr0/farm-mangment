@@ -1,13 +1,40 @@
 import { useFormik } from 'formik'
-import React from 'react'
+import React, { useState } from 'react'
 import * as Yup from "yup";
 import { IoIosSave } from "react-icons/io";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 function Weight() {
     
-    function submitWeight(value) {
-        console.log(value);
+    let navigate = useNavigate();
+    const [error ,setError] = useState(null);
+    const [isLoading , setisLoading] = useState(false);
+    
+    let Authorization = localStorage.getItem('Authorization')
+    let headers = {
+    Authorization: `Bearer ${Authorization}`
+    }
+    
+    async function submitWeight(value) {
+        setisLoading(true);
+        setError(null);
+        try {
+            let { data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/weight/AddWeight`, value, 
+            { headers });
+            console.log(value);  
+            // console.log(headers);  
+            if (data.status === "success") {
+                console.log(data);
+                setisLoading(false);
+                navigate('/weightTable')
+            }
+        } catch (err) {
+            setisLoading(false);
+            setError(err.response?.data?.message );
+            console.log(err.response.data);  
+        }
     }
 
 
@@ -32,14 +59,18 @@ function Weight() {
 return <>
     <div className='container'>
     <div className="title2">Weight</div>
-        
+    <p className="text-danger">{error}</p>
+
 
 <form onSubmit={formik.handleSubmit} className='mt-5'>
     
-    
-    <button disabled={!(formik.isValid && formik.dirty)}  type="submit" className="btn btn-dark button2 ">
-                <IoIosSave /> Save
-            </button>   
+{isLoading?(
+        <button type="submit" className="btn  button2">
+    <i className="fas fa-spinner fa-spin"></i>
+    </button>):(
+    <button type="submit" className="btn  button2">
+    <IoIosSave /> Save
+    </button>)}
     
             <div className="animaldata">
                 
