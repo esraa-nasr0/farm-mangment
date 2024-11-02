@@ -36,6 +36,7 @@ import Vaccinebylocationshed from "./Components/Vaccine/Vaccinebylocationshed.js
 import VaccineanimalContextProvider from "./Context/VaccineanimalContext.js";
 import VaccineTable from "./Components/Vaccine/VaccineTable.jsx";
 import EditVaccine from "./Components/Vaccine/EditVaccine.jsx";
+// import UploadExcel from "./Components/Animals/UploadExcel.jsx";
 
 
 let routers = createBrowserRouter([
@@ -56,6 +57,7 @@ let routers = createBrowserRouter([
       { path: "breadingTable", element: <ProtectedRoute><BreadingTable /></ProtectedRoute> },
       { path: "editbreading/:id", element: <ProtectedRoute><EditBreeding /></ProtectedRoute> },
       { path: "animals", element: <ProtectedRoute><Animals /></ProtectedRoute> },
+      // { path: "uploadExcel", element: <ProtectedRoute><UploadExcel /></ProtectedRoute> },
       { path: "editAnimal/:id", element: <ProtectedRoute><EditAnimal /></ProtectedRoute> },
       { path: "animalsDetails", element: <ProtectedRoute><AnimalsDetails /></ProtectedRoute> },
       { path: "mating", element: <ProtectedRoute><Mating /></ProtectedRoute> },

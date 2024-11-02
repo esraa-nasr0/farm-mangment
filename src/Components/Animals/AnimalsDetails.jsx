@@ -26,7 +26,7 @@ export default function AnimalsDetails() {
             let { data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/animal/addanimal`, value, 
             { headers });
             // console.log(value);  
-            // console.log(headers);  
+            // console.log(headers); 
             if (data.status === "success") {
                 // console.log(data);
                 setisLoading(false);

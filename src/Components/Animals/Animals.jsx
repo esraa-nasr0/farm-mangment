@@ -7,33 +7,32 @@ import { Rings } from 'react-loader-spinner';
 import { AnimalContext } from '../../Context/AnimalContext';
 import Swal from 'sweetalert2'; 
 import { useNavigate } from "react-router-dom";
+import UploadExcel from './UploadExcel';
 
 export default function Animals() {
-    let navigate = useNavigate();
-    let { removeAnimals, getAnimals } = useContext(AnimalContext);
+    const navigate = useNavigate();
+    const { removeAnimals, getAnimals } = useContext(AnimalContext);
 
     const [animals, setAnimals] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const [animalsPerPage] = useState(10); // Show 10 animals per page
+    const [animalsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
-    
-    // Search states
+
     const [searchTagId, setSearchTagId] = useState('');
     const [searchAnimalType, setSearchAnimalType] = useState('');
     const [searchLocationShed, setSearchLocationShed] = useState('');
     const [searchBreed, setSearchBreed] = useState('');
     const [searchGender, setSearchGender] = useState('');
 
-    async function removeItem(id) {
+    const removeItem = async (id) => {
         await removeAnimals(id);
         setAnimals(prevAnimals => prevAnimals.filter(animal => animal._id !== id));
-    }
+    };
 
-    async function fetchAnimals() {
+    const fetchAnimals = async () => {
         setIsLoading(true);
-        
-        // Prepare filters for search functionality
+
         const filters = {
             tagId: searchTagId,
             animalType: searchAnimalType,
@@ -41,20 +40,18 @@ export default function Animals() {
             locationShed: searchLocationShed,
             gender: searchGender,
         };
-        
+
         let { data } = await getAnimals(currentPage, animalsPerPage, filters);
-        
-        // Assuming `data.data.animals` is the list of animals, and `data.data.total` is the total number of animals
         setAnimals(data.data.animals);
-        setTotalPages(Math.ceil(data.data.total / animalsPerPage)); // Calculate total pages
+        setTotalPages(Math.ceil(data.data.total / animalsPerPage));
         setIsLoading(false);
-    }
+    };
 
     useEffect(() => {
         fetchAnimals();
-    }, [currentPage]); // Re-fetch when the page changes
+    }, [currentPage]);
 
-    function handleClick(id) {
+    const handleClick = (id) => {
         Swal.fire({
             title: "هل تريد الاستمرار؟",
             icon: "question",
@@ -66,21 +63,42 @@ export default function Animals() {
                 removeItem(id);
             }
         });
-    }
+    };
 
-    function editAnimal(id) {
+    const editAnimal = (id) => {
         navigate(`/editAnimal/${id}`);
-    }
+    };
 
-    function handleSearch() {
-        setCurrentPage(1); // Reset to first page when searching
+    const handleSearch = () => {
+        setCurrentPage(1);
         fetchAnimals();
-    }
+    };
 
-    // Pagination function
     const paginate = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
+
+    // Load animals from local storage on mount
+    useEffect(() => {
+        const storedAnimals = JSON.parse(localStorage.getItem('animals'));
+        if (storedAnimals) {
+            setAnimals(storedAnimals);
+        } else {
+            fetchAnimals(); // Fetch from backend if nothing is in local storage
+        }
+    }, []);
+
+    const addAnimals = (newAnimals) => {  
+    setAnimals((prevAnimals) => {  
+        const updatedAnimals = [
+            ...prevAnimals, 
+            ...newAnimals.filter(animal => !prevAnimals.some(existingAnimal => existingAnimal.tagId === animal.tagId))
+        ];  
+        localStorage.setItem('animals', JSON.stringify(updatedAnimals));  
+        return updatedAnimals;  
+    });  
+    setTotalPages(Math.ceil((animals.length + newAnimals.length) / animalsPerPage));   
+};
 
     return (
         <>
@@ -97,58 +115,20 @@ export default function Animals() {
                         </button>
                     </Link>
 
-                    {/* Search Inputs Inline */}
+                    {/* Pass the addAnimals function to UploadExcel component */}
+                    <UploadExcel addAnimals={addAnimals} />
+
                     <div className="d-flex flex-wrap mt-4">
-                        <input 
-                            type="text" 
-                            className="form-control me-2 mb-2" 
-                            placeholder="Search by Tag ID" 
-                            value={searchTagId} 
-                            onChange={(e) => setSearchTagId(e.target.value)} 
-                            style={{ flex: 1 }}
-                        />
-                        <input 
-                            type="text" 
-                            className="form-control me-2 mb-2" 
-                            placeholder="Search by Animal Type" 
-                            value={searchAnimalType} 
-                            onChange={(e) => setSearchAnimalType(e.target.value)} 
-                            style={{ flex: 1 }}
-                        />
-                        <input 
-                            type="text" 
-                            className="form-control me-2 mb-2" 
-                            placeholder="Search by Location Shed" 
-                            value={searchLocationShed} 
-                            onChange={(e) => setSearchLocationShed(e.target.value)} 
-                            style={{ flex: 1 }}
-                        />
-                        <input 
-                            type="text" 
-                            className="form-control me-2 mb-2" 
-                            placeholder="Search by Breed" 
-                            value={searchBreed} 
-                            onChange={(e) => setSearchBreed(e.target.value)} 
-                            style={{ flex: 1 }}
-                        />
-                        <input 
-                            type="text" 
-                            className="form-control me-2 mb-2" 
-                            placeholder="Search by Gender" 
-                            value={searchGender} 
-                            onChange={(e) => setSearchGender(e.target.value)} 
-                            style={{ flex: 1 }}
-                        />
-                        <button 
-                            className="btn mb-2 me-2" 
-                            onClick={handleSearch}
-                            style={{ backgroundColor: '#81a9d1', borderColor: '#81a9d1', color: 'white' }}
-                        >
+                        <input type="text" className="form-control me-2 mb-2" placeholder="Search by Tag ID" value={searchTagId} onChange={(e) => setSearchTagId(e.target.value)} style={{ flex: 1 }} />
+                        <input type="text" className="form-control me-2 mb-2" placeholder="Search by Animal Type" value={searchAnimalType} onChange={(e) => setSearchAnimalType(e.target.value)} style={{ flex: 1 }} />
+                        <input type="text" className="form-control me-2 mb-2" placeholder="Search by Location Shed" value={searchLocationShed} onChange={(e) => setSearchLocationShed(e.target.value)} style={{ flex: 1 }} />
+                        <input type="text" className="form-control me-2 mb-2" placeholder="Search by Breed" value={searchBreed} onChange={(e) => setSearchBreed(e.target.value)} style={{ flex: 1 }} />
+                        <input type="text" className="form-control me-2 mb-2" placeholder="Search by Gender" value={searchGender} onChange={(e) => setSearchGender(e.target.value)} style={{ flex: 1 }} />
+                        <button className="btn mb-2 me-2" onClick={handleSearch} style={{ backgroundColor: '#81a9d1', borderColor: '#81a9d1', color: 'white' }}>
                             <i className="fas fa-search"></i>
                         </button>
                     </div>
 
-                    {/* Animal Table */}
                     <table className="table table-striped mt-3 p-2">
                         <thead>
                             <tr>
@@ -172,11 +152,7 @@ export default function Animals() {
                                     <td onClick={() => editAnimal(animal._id)} style={{ cursor: 'pointer' }} className='text-primary'>
                                         <FaRegEdit /> Edit Animal
                                     </td>
-                                    <td 
-                                        onClick={() => handleClick(animal.id || animal._id)} 
-                                        className='text-danger'
-                                        style={{ cursor: 'pointer' }} 
-                                    >
+                                    <td onClick={() => handleClick(animal.id || animal._id)} className='text-danger' style={{ cursor: 'pointer' }}>
                                         <RiDeleteBin6Line /> Remove Animal
                                     </td>
                                 </tr>
@@ -184,26 +160,18 @@ export default function Animals() {
                         </tbody>
                     </table>
 
-                    {/* Pagination Controls */}
                     <div className="d-flex justify-content-center mt-4">
                         <nav>
                             <ul className="pagination">
-                                {/* Go to first page */}
                                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                                     <button className="page-link" onClick={() => paginate(1)}>First</button>
                                 </li>
-
-                                {/* Show previous page */}
                                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
                                     <button className="page-link" onClick={() => paginate(currentPage - 1)}>Previous</button>
                                 </li>
-
-                                {/* Dynamic page numbers */}
                                 {Array.from({ length: totalPages }, (_, index) => {
                                     const pageNumber = index + 1;
-                                    const isPageInRange = pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2;
-
-                                    if (isPageInRange) {
+                                    if (pageNumber >= currentPage - 2 && pageNumber <= currentPage + 2) {
                                         return (
                                             <li key={index} className={`page-item ${pageNumber === currentPage ? 'active' : ''}`}>
                                                 <button className="page-link" onClick={() => paginate(pageNumber)}>
@@ -214,12 +182,9 @@ export default function Animals() {
                                     }
                                     return null;
                                 })}
-
-                                {/* Show next page */}
                                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                                     <button className="page-link" onClick={() => paginate(currentPage + 1)}>Next</button>
                                 </li>
-
                             </ul>
                         </nav>
                     </div>
