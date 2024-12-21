@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+ 
   
 }
 
@@ -22,7 +23,7 @@ code {
   justify-content: center;
   align-items: center;
   padding: 10px;
-  background: linear-gradient(135deg, #a8cbe6, #164f7a);
+  background-color: #ddd6c2;
 }
 .container2{
   
@@ -48,7 +49,6 @@ code {
   height: 3px;
   width: 30px;
   border-radius: 5px;
-  background: linear-gradient(135deg, #a8cbe6, #164f7a);
 }
 .user-details{
   
@@ -94,10 +94,10 @@ code {
   letter-spacing: 1px;
   cursor: pointer;
   transition: all 0.3s ease;
-  background: linear-gradient(135deg, #a8cbe6, #164f7a);
+  background:  #3f5c40;
 }
 .button:hover{
-  background: linear-gradient(-135deg, #a8cbe6, #164f7a);
+  background: #3f5c40;
 }
 
 @media(max-width: 584px){
@@ -147,7 +147,7 @@ code {
   font-size: 28px;
   font-weight: 500;
   position: relative;
-  color: #152e78 !important ;
+  color: #88522e !important ;
 }
 .title2::before{
   
@@ -158,12 +158,12 @@ code {
   height: 2px;
   width: 4%;
   border-radius: 5px;
-  background-color: #152e78 !important;
+  background-color: #88522e !important;
 }
 .button2{
   float: right;
   cursor: pointer;
-  background-color: #219de5 !important;
+  background-color: #88522e !important;
   color: white;
   border: none;
 }
@@ -213,7 +213,7 @@ code {
 .text-overlay h1 {
   font-size: 150px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  -webkit-text-stroke: 1px #152e78;
+  -webkit-text-stroke: 1px #3f5c40;
   -webkit-text-fill-color: transparent;
   margin: 0;
 }
@@ -226,7 +226,7 @@ code {
   font-size: 40px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 800;
-  color: #152e78;
+  color: #3f5c40;
 }
 
 /* HomeServices */
@@ -240,6 +240,7 @@ code {
 
 .section h2 {
   font-size: 2rem;
+  color: #88522e !important ;
 }
 .cards {
   display: flex;
@@ -254,7 +255,7 @@ code {
   padding: 40px 20px;
   list-style: none;
   border-radius: 7px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   margin-bottom: 30px;
   width: calc(100% / 3 - 35px);
   text-align: center;
@@ -271,9 +272,14 @@ code {
   object-fit: cover;
   margin:0 30px  25px 30px;
 }
+.card h3{
+  color: #3f5c40 !important ;
+
+}
 .card p {
   padding: 0 15px;
   margin-top: 5px;
+  color: #88522e !important ;
 }
 .Link{
   color: #0e0e0e;
@@ -319,10 +325,15 @@ code {
 }
 
 .contact h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
+  color: #3f5c40;
+}
+.contact h5{
+  color: #3f5c40;
 }
 .contact p {
-  font-size: 20px;
+  color: #88522e;
+  font-size: 15px;
 }
 .row2 {
   margin: 60px 0 90px;
@@ -367,13 +378,13 @@ code {
 .mating-record-header h2 {
   font-size: 20px;
   font-weight: bold;
-  color: #152e78 !important;
+  color: #3f5c40 !important;
 }
 
 .add-record-btn {
   display: flex;
   align-items: center;
-  background-color: #219de5; /* Blue button */
+  background-color: #88522e; /* Blue button */
   color: white;
   border: none;
   border-radius: 5px;
@@ -410,7 +421,7 @@ code {
 }
 
 .edit-icon:hover, .delete-icon:hover {
-  color:#152e78; /* Darker shade on hover */
+  color:#3f5c40; /* Darker shade on hover */
 }
 
 /* Pagination Controls */
@@ -426,19 +437,19 @@ code {
 }
 
 .page-link {
-  color:#81a9d1; /* Text color */
+  color:#88522e; /* Text color */
   background-color: transparent; /* Make sure background is transparent */
-  border: 1px solid #81a9d1; /* Border color */
+  border: 1px solid #88522e; /* Border color */
 }
 
 .page-link:hover {
-  background-color: #81a9d1; /* Background color on hover */
+  background-color: #88522e; /* Background color on hover */
   color: #fff; /* Text color on hover */
 }
 
 .page-item.active .page-link {
-  border: 1px solid #81a9d1; /* Border color */
-  background-color: #81a9d1; /* Active page background color */
+  border: 1px solid #88522e; /* Border color */
+  background-color: #88522e; /* Active page background color */
   color: #fff; /* Active page text color */
 }
 /* report */
@@ -520,3 +531,23 @@ code {
   max-width: 400px; /* Adjust width to shrink the container */
   margin: 0 auto;
 }
+
+/* about */
+
+.aboutimg{
+  width: 50%;
+  height: 70%;
+  float: left;
+  border-radius:10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  -ms-border-radius:10px;
+  -o-border-radius:10px;
+}
+.aboutdiv{
+  width: 46%;
+  float: right;
+  padding-top: 195px;
+}
+

@@ -105,6 +105,7 @@ function Report() {
 
     return (
         <div className="container">
+            <div className="title2">Report</div>
             <div className="form1-container">
                 <form onSubmit={handleSubmit}>
                 <button type="submit" className="btn btn-secondary button2">Get Report</button>
@@ -131,7 +132,7 @@ function Report() {
 
             {isLoading && <p>Loading...</p>}
             {error && <p className="text-danger">{error}</p>}
-            <h2>Current Status</h2>
+            <h2 style={{color:'#88522e'}}>Current Status</h2>
             {reportData && (
                 <div className="report-container">
                     <Pie data={pieData} />

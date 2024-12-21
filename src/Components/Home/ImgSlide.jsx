@@ -1,49 +1,52 @@
-import React from 'react';
-import Slider from "react-slick";
-import slider4 from "../../Assets/Img/long-shot-herd-sheep-eating-grass-pasture.jpg";
-import slider2 from "../../Assets/Img/cute-goats-farmhouse.jpg";
-import slider3 from "../../Assets/Img/full-shot-man-living-countryside.jpg";
+import React from "react";
+import goats from "../../Assets/Img/long-shot-herd-sheep-eating-grass-pasture.jpg";
 
-function ImgSlide() {
-    var settings = {
-        dots: false,
-        infinite: true,
-        autoplay: true,
-        speed: 1500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-    };
+export default function ImgSlide() {
+return (
+    <div style={{ background: "#ddd6c2", height: "100vh" }}>
+    <div
+        style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        height: "100%",
+          padding: "0 2rem", // Add padding to prevent elements from touching edges
+        }}
+        className="container"
+    >
+        {/* Section for the title */}
+        <div style={{ flex: 1, textAlign: "center" }}>
+        <h1
+            className="font-bold"
+            style={{
+            fontSize: "3rem",
+            color: "#5a3e2b",
+            marginBottom: "1rem",
+            }}
+        >
+            ONLINE FARM
+        </h1>
+        <p style={{ fontSize: "1.25rem", color: "#555" }}>
+        Welcome to Online Farm, the all-in-one 
+        solution for efficient goat and sheep farm management,
+        designed to simplify tracking of animal health, breeding, and productivity!
+        </p>
+        </div>
 
-    return <>
-        
-            <div className="row gx-0">
-                <Slider {...settings}>
-                    <div className="image-wrapper">
-                        <img height={645} className='w-100' src={slider3} alt='goat3'/>
-                        <div className="text-overlay">
-                            <h1>FARM ONLINE</h1>
-                            <span>Hello Everyone</span>
-                        </div>
-                    </div>
-                    <div className="image-wrapper">
-                        <img height={645} className='w-100' src={slider2} alt='goat2'/>
-                        <div className="text-overlay">
-                            <h1>FARM ONLINE</h1>
-                            <span>Hello Everyone</span>
-                        </div>
-                    </div>
-                    <div className="image-wrapper">
-                        <img height={645} className='w-100' src={slider4} alt='goat4'/>
-                        <div className="text-overlay">
-                            <h1>FARM ONLINE</h1>
-                            <span>Hello Everyone</span>
-                        </div>
-                    </div>
-                </Slider>
-            </div>
-        
-        </>
+        {/* Section for the image */}
+        <div style={{ flex: 1, textAlign: "center" }}>
+        <img
+            src={goats}
+            alt="Goats"
+            style={{
+            maxWidth: "100%",
+            height: "auto",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+            }}
+        />
+        </div>
+    </div>
+    </div>
+);
 }
-
-export default ImgSlide;

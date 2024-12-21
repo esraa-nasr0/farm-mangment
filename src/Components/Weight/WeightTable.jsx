@@ -33,9 +33,7 @@ function WeightTable() {
             weightType: searchCriteria.weightType,
             Date: searchCriteria.Date,
         };
-        
         let { data } = await getWeight(currentPage, animalsPerPage, filters);
-        
         // Assuming `data.data.animals` is the list of animals, and `data.data.total` is the total number of animals
         setWeight(data.data.weight);
         setTotalPages(Math.ceil(data.data.total / animalsPerPage)); // Calculate total pages
@@ -95,7 +93,7 @@ function WeightTable() {
                     visible={true}
                     height="100"
                     width="100"
-                    color="#2f5e97"
+                    color="#3f5c40"
                     ariaLabel="rings-loading"
                     wrapperStyle={{}}
                     wrapperClass=""
@@ -128,7 +126,7 @@ function WeightTable() {
                         />
 
                         <input
-                            type="date"
+                            type="text"
                             className="form-control me-2 mb-2"
                             placeholder="Search by Date"
                             value={searchCriteria.Date}
@@ -139,7 +137,7 @@ function WeightTable() {
                         <button
                             className="btn mb-2 me-2"
                             onClick={handleSearch}
-                            style={{ backgroundColor: '#81a9d1', borderColor: '#81a9d1', color: '#E9E6E2' }}
+                            style={{ backgroundColor: '#88522e', borderColor: '#88522e', color: '#E9E6E2' }}
                         >
                             <i className="fas fa-search"></i>
                         </button>
@@ -174,7 +172,7 @@ function WeightTable() {
                                 <td>{weight.weight}</td>
                                 <td>{weight.height}</td>
                                 <td>{weight.Date ? weight.Date.split('T')[0] : 'No Date'}</td>
-                                <td onClick={() => editWeight(weight._id)} style={{ cursor: 'pointer' }} className="text-primary">
+                                <td onClick={() => editWeight(weight._id)} style={{ cursor: 'pointer' }} className="text-success">
                                     <FaRegEdit /> Edit Weight
                                 </td>
                                 <td onClick={() => handleClick(weight._id)} className="text-danger" style={{ cursor: 'pointer' }}>

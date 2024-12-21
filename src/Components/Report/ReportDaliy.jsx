@@ -48,6 +48,7 @@ function ReportDaily() {
 
     return (
         <div className="container">
+            <div className="title2">Daliy Report</div>
             <div className="form1-container">
                 <form onSubmit={handleSubmit}>
                 <button type="submit" className="btn btn-secondary button2">Get Report</button>

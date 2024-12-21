@@ -27,11 +27,11 @@ export default function Navbar() {
     <>
       <nav
   className="navbar p-3 mb-2 fixed-top navbar-dark navbar-expand-lg"
-  style={{ backgroundColor: "#2f5e97" }}
+  style={{ backgroundColor: "#3f5c40" }}
 >
   <div className="container-fluid">
     <Link className="navbar-brand" to="#" style={{ color: "#E9E6E2" }}>
-      Navbar
+      Online Farm
     </Link>
     <button
       className="navbar-toggler"
@@ -57,73 +57,10 @@ export default function Navbar() {
             <li className="nav-item">
               <Link
                 className="nav-link"
-                to="breadingTable"
+                to="homeServices"
                 style={{ color: "#E9E6E2" }}
               >
-                Breeding
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="animals"
-                style={{ color: "#E9E6E2" }}
-              >
-                Animals
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="report"
-                style={{ color: "#E9E6E2" }}
-              >
-                Report
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="reportDaliy"
-                style={{ color: "#E9E6E2" }}
-              >
-                ReportDaliy
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="matingTable"
-                style={{ color: "#E9E6E2" }}
-              >
-                Mating
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="weightTable"
-                style={{ color: "#E9E6E2" }}
-              >
-                Weight
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="VaccineTable"
-                style={{ color: "#E9E6E2" }}
-              >
-                Vaccine
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className="nav-link"
-                to="vaccinebylocationshed"
-                style={{ color: "#E9E6E2" }}
-              >
-                Vaccinebylocationshed
+                Home Services
               </Link>
             </li>
           </>

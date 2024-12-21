@@ -12,21 +12,27 @@ function VaccineTable() {
     let { getallVaccineanimal, DeletVaccineanimal } = useContext(VaccineanimalContext);
     const [vaccines, setVaccines] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [searchCriteria, setSearchCriteria] = useState({ tagId: '', animalType: '', vaccineName: '' });
 
-    // دالة جلب اللقاحات
     async function getItem() {
         setIsLoading(true);
         try {
-            let { data } = await getallVaccineanimal();
-            console.log("Data received from API:", data);
             
-            // تعديل هنا
+            const filters = {
+                vaccineName: searchCriteria.vaccineName,
+                tagId: searchCriteria.tagId,
+                locationShed: searchCriteria.locationShed
+            };
+    
+            console.log("Applying filters:", filters);
+    
+            let { data } = await getallVaccineanimal(filters);
+    
             if (data && data.vaccine) {
-                // إزالة اللقاحات المكررة باستخدام Set
                 const uniqueVaccines = Array.from(new Set(data.vaccine.map(vaccine => vaccine._id)))
-                    .map(id => {
-                        return data.vaccine.find(vaccine => vaccine._id === id)
-                    });
+                    .map(id => data.vaccine.find(vaccine => vaccine._id === id));
+    
+        
                 setVaccines(uniqueVaccines);
             } else {
                 console.error("Unexpected data structure:", data);
@@ -39,22 +45,20 @@ function VaccineTable() {
             setIsLoading(false);
         }
     }
-    
+
+    const handleSearch = () => {
+        getItem();
+    };
 
     useEffect(() => {
         getItem();
     }, []);
 
     async function deleteItem(id) {
-        console.log("Deleting ID:", id);
         try {
-            let response = await DeletVaccineanimal(id); // استدعاء دالة الحذف الخاصة باللقاح
-    console.log(response);
-        
+            let response = await DeletVaccineanimal(id);
             if (response.status === "success") {
-                // تحديث الحالة بعد الحذف بإزالة اللقاح المحذوف من القائمة
                 setVaccines(prevVaccines => prevVaccines.filter(vaccine => vaccine._id !== id));
-                console.log("Vaccine deleted successfully");
             } else {
                 console.error("Error deleting vaccine:", response);
             }
@@ -62,29 +66,25 @@ function VaccineTable() {
             console.error("Error occurred:", error);
         }
     }
-    
+
     function handleClick(id) {
         Swal.fire({
             title: "هل تريد الاستمرار؟",
             icon: "question",
-            iconHtml: "؟",
             confirmButtonText: "نعم",
             cancelButtonText: "لا",
             showCancelButton: true,
             showCloseButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                deleteItem(id); // استدعاء دالة الحذف إذا تم تأكيد العملية
+                deleteItem(id);
             }
         });
     }
-    
 
     function editVaccine(id) {
         navigate(`/editVaccine/${id}`);
     }
-
- 
 
     return (
         <>
@@ -94,12 +94,60 @@ function VaccineTable() {
                 </div>
             ) : (
                 <div className="container">
-                    <div className="title2">Vaccines</div>
-                    <Link to='/Vaccinebyanimal'>
-                        <button type="button" className="btn btn-secondary btn-lg active button2 mt-3">
-                            <MdOutlineAddToPhotos /> Add New Vaccine
+                    <div className="d-flex justify-content-between align-items-center  mb-4" style={{marginTop:"140px"}}>  
+                        <h2 className="" style={{color:"#88522e"}}>Vaccine Records</h2>  
+                        <Link to='/vaccinebyanimal'>  
+                            <button 
+                                type="button" 
+                                className="btn btn-lg active button2"  
+                                style={{ background: "#88522e", color: "white", borderColor: "#3a7d44" }}
+                            >  
+                                <MdOutlineAddToPhotos /> Add New Vaccine by Animal
+                            </button>  
+                        </Link> 
+                        <Link to='/vaccinebylocationshed'>  
+                            <button 
+                                type="button" 
+                                className="btn btn-lg active button2"  
+                                style={{ background: "#88522e", color: "white", borderColor: "#3a7d44" }}
+                            >  
+                                <MdOutlineAddToPhotos /> Add New Vaccine by LocationShed
+                            </button>  
+                        </Link> 
+                    </div>  
+
+                    <div className="d-flex align-items-center gap-2 mt-4">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            value={searchCriteria.vaccineName} 
+                            placeholder="Search by vaccineName" 
+                            onChange={(e) => setSearchCriteria(prev => ({ ...prev, vaccineName: e.target.value }))} 
+                        />
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            value={searchCriteria.tagId} 
+                            placeholder="Search by tagId" 
+                            onChange={(e) => setSearchCriteria(prev => ({ ...prev, tagId: e.target.value }))} 
+                        />
+
+<input 
+                            type="text" 
+                            className="form-control" 
+                            value={searchCriteria.locationShed} 
+                            placeholder="Search by locationShed" 
+                            onChange={(e) => setSearchCriteria(prev => ({ ...prev, locationShed: e.target.value }))} 
+                        />
+                        <button 
+                            className="btn" 
+                            onClick={handleSearch} 
+                            style={{ backgroundColor: '#88522e', borderColor: '#88522e', color: 'white' }}
+                        >
+                            <i className="fas fa-search" style={{ background: "#88522e"}} ></i>
                         </button>
-                    </Link>
+                    </div>
+
                     <table className="table table-striped mt-6">
                         <thead>
                             <tr>
@@ -127,7 +175,7 @@ function VaccineTable() {
                                             ))
                                             : 'No Vaccination Log'}
                                     </td>
-                                    <td onClick={() => editVaccine(vaccine._id)} className="text-primary" style={{ cursor: 'pointer' }}>
+                                    <td onClick={() => editVaccine(vaccine._id)}  style={{ cursor: 'pointer' ,color:"#88522e"}}>
                                         <FaRegEdit /> Edit
                                     </td>
                                     <td onClick={() => handleClick(vaccine._id)} className="text-danger" style={{ cursor: 'pointer' }}>

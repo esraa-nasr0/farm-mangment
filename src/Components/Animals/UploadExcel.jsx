@@ -10,7 +10,7 @@ function UploadExcel({ addAnimals }) {
     const headers = {  
         Authorization: `Bearer ${Authorization}`
     };  
-
+    
     const handleFileChange = (e) => {  
         const file = e.target.files[0];  
         if (file) {  
@@ -57,7 +57,7 @@ function UploadExcel({ addAnimals }) {
                     item.purchaseDate = !isNaN(purchaseDateObj) ? purchaseDateObj.toISOString() : null;
                 }
                 const response = await axios.post(
-                    'https://farm-project-bbzj.onrender.com/api/animal/addanimal',
+                    'https://farm-project-bbzj.onrender.com/api/animal/import',
                     item,
                     { headers: { ...headers, 'Content-Type': 'application/json' } }
                 );

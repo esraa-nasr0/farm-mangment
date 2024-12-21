@@ -2,6 +2,8 @@ import axios from 'axios';
 import { useFormik } from 'formik'
 import React, { useState } from 'react'
 import { IoIosSave } from "react-icons/io";
+import Swal from 'sweetalert2';
+
 
 
 function Mating() {
@@ -31,6 +33,13 @@ function Mating() {
                 setisLoading(false);
                 setMatingData(data.data.mating);  // Access the mating data correctly
                 setShowAlert(true);  // Show the alert with the delivery date
+                // Show SweetAlert success message
+        Swal.fire({
+            title: 'Success!',
+            text: 'Mating data added successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            });
             }
         } catch (err) {
             const errorMessage = err.response?.data?.message || "An error occurred while processing your request";

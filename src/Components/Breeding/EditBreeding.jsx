@@ -42,7 +42,7 @@ export default function EditBreeding() {
                     gender: entry.gender || '',
                     birthweight: entry.birthweight || '',
                     expectedWeaningDate: entry.expectedWeaningDate ? entry.expectedWeaningDate.split('T')[0] : ''
-                })) || [{ tagId: '', gender: '', birthweight: '', expectedWeaningDate: '' }]);
+                })));
             }
         } catch (error) {
             setError("Failed to fetch breeding data.");
@@ -121,8 +121,8 @@ export default function EditBreeding() {
     }
 
     return (
-        <div className="container">
-            <div className="title2">Edit Breeding</div>
+        <div className="container" style={{ marginTop: "140px" }}>
+            <div style={{ color: "#88522e", fontSize: "28px", fontWeight: "bold" }}>Edit Breeding</div>
             {error && <p className="text-danger">{error}</p>}
             {showAlert && <div className="alert alert-success mt-3">Breeding information updated successfully!</div>}
 
@@ -131,6 +131,7 @@ export default function EditBreeding() {
                     type="submit"
                     className="btn btn-dark button2"
                     disabled={isLoading || !(formik.isValid && formik.dirty)}
+                    style={{ background: "#88522e", color: "white", borderColor: "#3a7d44", padding: "5px 10px" }}
                 >
                     {isLoading ? <i className="fas fa-spinner fa-spin"></i> : <IoIosSave />} Save
                 </button>

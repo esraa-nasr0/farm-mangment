@@ -104,7 +104,7 @@ export default function Animals() {
         <>
             {isLoading ? (
                 <div className='animal'>
-                    <Rings visible={true} height="100" width="100" color="#2f5e97" ariaLabel="rings-loading" />
+                    <Rings visible={true} height="100" width="100" color="#3f5c40" ariaLabel="rings-loading" />
                 </div>
             ) : (
                 <div className="container">
@@ -124,7 +124,7 @@ export default function Animals() {
                         <input type="text" className="form-control me-2 mb-2" placeholder="Search by Location Shed" value={searchLocationShed} onChange={(e) => setSearchLocationShed(e.target.value)} style={{ flex: 1 }} />
                         <input type="text" className="form-control me-2 mb-2" placeholder="Search by Breed" value={searchBreed} onChange={(e) => setSearchBreed(e.target.value)} style={{ flex: 1 }} />
                         <input type="text" className="form-control me-2 mb-2" placeholder="Search by Gender" value={searchGender} onChange={(e) => setSearchGender(e.target.value)} style={{ flex: 1 }} />
-                        <button className="btn mb-2 me-2" onClick={handleSearch} style={{ backgroundColor: '#81a9d1', borderColor: '#81a9d1', color: 'white' }}>
+                        <button className="btn mb-2 me-2" onClick={handleSearch} style={{ backgroundColor: '#88522e', borderColor: '#88522e', color: 'white' }}>
                             <i className="fas fa-search"></i>
                         </button>
                     </div>
@@ -149,7 +149,7 @@ export default function Animals() {
                                     <td>{animal.animalType}</td>
                                     <td>{animal.breed}</td>
                                     <td>{animal.gender}</td>
-                                    <td onClick={() => editAnimal(animal._id)} style={{ cursor: 'pointer' }} className='text-primary'>
+                                    <td onClick={() => editAnimal(animal._id)} style={{ cursor: 'pointer' }} className='text-success'>
                                         <FaRegEdit /> Edit Animal
                                     </td>
                                     <td onClick={() => handleClick(animal.id || animal._id)} className='text-danger' style={{ cursor: 'pointer' }}>

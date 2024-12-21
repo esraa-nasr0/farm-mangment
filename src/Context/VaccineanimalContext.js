@@ -3,8 +3,7 @@ import axios from 'axios';
 
 const VaccineanimalContext = React.createContext();
 
-// دالة جلب جميع اللقاحات
-async function getallVaccineanimal() {
+async function getallVaccineanimal(filters = {}) {
     const Authorization = localStorage.getItem('Authorization');
     
     if (!Authorization) {
@@ -16,15 +15,17 @@ async function getallVaccineanimal() {
     };
 
     try {
-        const response = await axios.get('https://farm-project-bbzj.onrender.com/api/vaccine/GetAllVaccine', { headers });
-        return response.data; // ارجع فقط البيانات بدلاً من كائن الاستجابة الكامل
+        const response = await axios.get('https://farm-project-bbzj.onrender.com/api/vaccine/GetAllVaccine', {
+            headers,
+            params: filters
+        });
+        return response.data;
     } catch (err) {
         console.error("Error fetching vaccines:", err.response ? err.response.data : err.message);
-        throw err; // إعادة رمي الخطأ ليتم التعامل معه في مكان آخر
+        throw err;
     }
 }
 
-// دالة حذف لقاح
 async function DeletVaccineanimal(id) {
     const Authorization = localStorage.getItem('Authorization');
     
@@ -38,14 +39,13 @@ async function DeletVaccineanimal(id) {
 
     try {
         const response = await axios.delete(`https://farm-project-bbzj.onrender.com/api/vaccine/DeleteVaccine/${id}`, { headers });
-        return response.data; // ارجع فقط البيانات بدلاً من كائن الاستجابة الكامل
+        return response.data;
     } catch (err) {
         console.error("Error deleting vaccine:", err.response ? err.response.data : err.message);
-        throw err; // إعادة رمي الخطأ ليتم التعامل معه في مكان آخر
+        throw err;
     }
 }
 
-// مزود السياق
 export default function VaccineanimalContextProvider(props) {
     return (
         <VaccineanimalContext.Provider value={{ getallVaccineanimal, DeletVaccineanimal }}>

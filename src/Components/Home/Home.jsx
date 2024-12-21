@@ -1,16 +1,11 @@
 import React from "react";
-import ImgSlide from './ImgSlide';
-import HomeServices from "./HomeServices";
-import ContactUs from "../ContactUs/ContactUs";
-
-
+import ImgSlide from "./ImgSlide";
+import About from "../About/About";
 
 export default function Home() {
-    
-
-    return <>
-        <ImgSlide/>
-        <HomeServices/>
-        <ContactUs/>
+return (<>
+    <ImgSlide/>
+    <About/>
     </>
+);
 }

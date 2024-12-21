@@ -4,6 +4,8 @@ import axios from 'axios';
 // import * as Yup from 'yup';
 import { IoIosSave } from "react-icons/io";
 import { useTranslation } from 'react-i18next';
+import Swal from 'sweetalert2';
+
 
 
 export default function AnimalsDetails() {
@@ -25,13 +27,18 @@ export default function AnimalsDetails() {
         try {
             let { data } = await axios.post(`https://farm-project-bbzj.onrender.com/api/animal/addanimal`, value, 
             { headers });
-            // console.log(value);  
-            // console.log(headers); 
+    
             if (data.status === "success") {
-                // console.log(data);
                 setisLoading(false);
                 setAnimalData(data.data.animal);
-                setShowAlert(true);  // Show the alert with the delivery date
+                setShowAlert(true);  // Optionally show the custom alert
+                // Show SweetAlert success message
+        Swal.fire({
+            title: 'Success!',
+            text: 'Animal data added successfully!',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            });
             }
         } catch (err) {
             setisLoading(false);
@@ -39,6 +46,7 @@ export default function AnimalsDetails() {
             console.log(err.response.data);  
         }
     }
+    
     
     
 
@@ -79,7 +87,7 @@ export default function AnimalsDetails() {
         traderName: '',
         purchaseDate: '',
         purchasePrice: '',
-        teething: '',
+        Teething: '',
         },
         // validationSchema,
         onSubmit:submitAnimals
@@ -216,17 +224,17 @@ export default function AnimalsDetails() {
         </div>
                             
         <div className="input-box">
-        <label className="label" htmlFor="teething">{t('teething')}</label>
+        <label className="label" htmlFor="Teething">{t('teething')}</label>
         <select
-            value={formik.values.teething}
+            value={formik.values.Teething}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur} className="input2" name="teething" id="teething">
+            onBlur={formik.handleBlur} className="input2" name="Teething" id="Teething">
             <option value="">{t('teething')}</option>
             <option value="two">{t('two')}</option>
             <option value="four">{t('four')}</option>
             <option value="six">{t('six')}</option>
             </select>
-            {formik.errors.teething && formik.touched.teething && (<p className="text-danger">{formik.errors.teething}</p>)}
+            {formik.errors.Teething && formik.touched.Teething && (<p className="text-danger">{formik.errors.Teething}</p>)}
             </div></>)}
 
         {formik.values.animaleCondation === 'born at farm' && (<>

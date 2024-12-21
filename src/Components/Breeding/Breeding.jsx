@@ -1,139 +1,185 @@
-import React, { useState, useContext } from 'react';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import axios from 'axios';
+import React, { useState, useContext } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
 import { UserContext } from "../../Context/UserContext";
-import { IoIosSave } from "react-icons/io"; // For the save icon
+import { IoIosSave } from "react-icons/io";
+import Swal from 'sweetalert2';
+
 
 export default function Breeding() {
     const [numberOfBirths, setNumberOfBirths] = useState(1);
-    const [birthEntries, setBirthEntries] = useState([{ tagId: '', gender: '', birthweight: '' }]);
-    let { Authorization } = useContext(UserContext);
+    const [birthEntries, setBirthEntries] = useState([{ tagId: "", gender: "", birthweight: "" }]);
+    const [isLoading, setIsLoading] = useState(false);
+    const { Authorization } = useContext(UserContext);
 
-    async function Breading(values) {
+    async function handleSubmit(values) {
         try {
+            setIsLoading(true);
             const dataToSubmit = {
                 ...values,
                 birthEntries,
             };
 
-            console.log('Submitting form with values:', dataToSubmit);
+            console.log("Authorization:", Authorization); // Debugging token
+            console.log("Submitting form with values:", dataToSubmit);
 
-            let { data } = await axios.post(
-                `https://farm-project-bbzj.onrender.com/api/breeding/AddBreeding`,
+            const { data } = await axios.post(
+                "https://farm-project-bbzj.onrender.com/api/breeding/AddBreeding",
                 dataToSubmit,
                 {
                     headers: {
-                        Authorization:` Bearer ${Authorization}`,
+                        Authorization: `Bearer ${Authorization}`,
                     },
                 }
             );
 
-            console.log('Response:', data);
-        
+            console.log("Response:", data);
+
+            if (data.status === "Success") {
+                console.log("SweetAlert should appear now!");
+                Swal.fire({
+                    title: "Success!",
+                    text: "Data has been submitted successfully!",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                });
+            }
         } catch (err) {
-            console.log(err.response?.data);
+            console.error(err.response?.data || "Error occurred");
+        } finally {
+            setIsLoading(false);
         }
     }
+    
+    
 
     const validationSchema = Yup.object({
-        tagId: Yup.string().required('Tag ID is required'),
-        deliveryState: Yup.string().required('Delivery state is required').max(50, 'Delivery state must be 50 characters or less'),
-        deliveryDate: Yup.date().required('Delivery date is required').typeError('Invalid date format'),
-        numberOfBirths: Yup.number().required('Number of births is required').min(1, 'At least 1').max(4, 'No more than 4'),
+        tagId: Yup.string().required("Tag ID is required"),
+        deliveryState: Yup.string()
+            .required("Delivery state is required")
+            .max(50, "Delivery state must be 50 characters or less"),
+        deliveryDate: Yup.date()
+            .required("Delivery date is required")
+            .typeError("Invalid date format"),
+        numberOfBirths: Yup.number()
+            .required("Number of births is required")
+            .min(1, "At least 1")
+            .max(4, "No more than 4"),
     });
 
     const formik = useFormik({
         initialValues: {
-            tagId: '',
-            deliveryState: '',
-            deliveryDate: '',
+            tagId: "",
+            deliveryState: "",
+            deliveryDate: "",
             numberOfBirths: 1,
         },
         validationSchema,
-        onSubmit: Breading
+        onSubmit: handleSubmit,
     });
 
     function handleNumberOfBirthsChange(e) {
-        const newNumberOfBirths = parseInt(e.target.value, 10);
-
-        // التأكد من أن القيمة الجديدة تبقى بين 1 و 4
-        if (newNumberOfBirths < 1) {
-            setNumberOfBirths(1);
-            return;
-        } else if (newNumberOfBirths > 4) {
-            setNumberOfBirths(4);
-            return;
-        }
+        const newNumberOfBirths = Math.max(1, Math.min(4, parseInt(e.target.value, 10) || 1));
 
         setNumberOfBirths(newNumberOfBirths);
 
         setBirthEntries((prev) => {
             const newEntries = prev.slice(0, newNumberOfBirths);
             while (newEntries.length < newNumberOfBirths) {
-                newEntries.push({ tagId: '', gender: '', birthweight: '' });
+                newEntries.push({ tagId: "", gender: "", birthweight: "" });
             }
             return newEntries;
         });
 
         formik.setFieldValue("numberOfBirths", newNumberOfBirths);
     }
-    
+
     function handleBirthEntriesChange(e, index) {
         const { name, value } = e.target;
         setBirthEntries((prevEntries) => {
             const updatedEntries = [...prevEntries];
             updatedEntries[index][name] = value;
-            return updatedEntries;  
+            return updatedEntries;
         });
     }
 
     return (
         <div className="container">
-            <div className="title2">Breeding</div>
+            <div
+                style={{
+                    marginTop: "140px",
+                    color: "#88522e",
+                    fontSize: "28px",
+                    fontWeight: "bold",
+                }}
+            >
+                Breeding
+            </div>
             <form onSubmit={formik.handleSubmit} className="mt-5">
-                <button disabled={!(formik.isValid && formik.dirty)} type="submit" className="btn btn-dark button2">
-                    <IoIosSave /> Save
-                </button>
+                
+            {isLoading ? (
+                        <button type="submit" className="btn button2">
+                            <i className="fas fa-spinner fa-spin"></i>
+                        </button>
+                    ) : (
+                        <button type="submit" className="btn button2">
+                            <IoIosSave /> Save
+                        </button>
+                    )}
                 <div className="animaldata">
                     <div className="input-box">
-                        <label className="label" htmlFor="tagId">Tag ID</label>
+                        <label className="label" htmlFor="tagId">
+                            Tag ID
+                        </label>
                         <input
-                            {...formik.getFieldProps('tagId')}
+                            {...formik.getFieldProps("tagId")}
                             placeholder="Enter your Tag ID"
                             id="tagId"
                             type="text"
                             className="input2"
                         />
-                        {formik.touched.tagId && formik.errors.tagId ? <p className="text-danger">{formik.errors.tagId}</p> : null}
+                        {formik.touched.tagId && formik.errors.tagId && (
+                            <p className="text-danger">{formik.errors.tagId}</p>
+                        )}
                     </div>
 
                     <div className="input-box">
-                        <label className="label" htmlFor="deliveryState">Delivery State</label>
+                        <label className="label" htmlFor="deliveryState">
+                            Delivery State
+                        </label>
                         <input
-                            {...formik.getFieldProps('deliveryState')}
+                            {...formik.getFieldProps("deliveryState")}
                             placeholder="Enter your delivery state"
                             id="deliveryState"
                             type="text"
                             className="input2"
                         />
-                        {formik.touched.deliveryState && formik.errors.deliveryState ? <p className="text-danger">{formik.errors.deliveryState}</p> : null}
+                        {formik.touched.deliveryState && formik.errors.deliveryState && (
+                            <p className="text-danger">{formik.errors.deliveryState}</p>
+                        )}
                     </div>
 
                     <div className="input-box">
-                        <label className="label" htmlFor="deliveryDate">Delivery Date</label>
+                        <label className="label" htmlFor="deliveryDate">
+                            Delivery Date
+                        </label>
                         <input
-                            {...formik.getFieldProps('deliveryDate')}
+                            {...formik.getFieldProps("deliveryDate")}
                             placeholder="Enter your delivery date"
                             id="deliveryDate"
                             type="date"
                             className="input2"
                         />
-                        {formik.touched.deliveryDate && formik.errors.deliveryDate ? <p className="text-danger">{formik.errors.deliveryDate}</p> : null}
+                        {formik.touched.deliveryDate && formik.errors.deliveryDate && (
+                            <p className="text-danger">{formik.errors.deliveryDate}</p>
+                        )}
                     </div>
 
                     <div className="input-box">
-                        <label className="label" htmlFor="numberOfBirths">Number of Births</label>
+                        <label className="label" htmlFor="numberOfBirths">
+                            Number of Births
+                        </label>
                         <input
                             value={numberOfBirths}
                             onChange={handleNumberOfBirthsChange}
@@ -143,44 +189,54 @@ export default function Breeding() {
                             className="input2"
                             name="numberOfBirths"
                         />
-                        {formik.touched.numberOfBirths && formik.errors.numberOfBirths ? <p className="text-danger">{formik.errors.numberOfBirths}</p> : null}
+                        {formik.touched.numberOfBirths &&
+                            formik.errors.numberOfBirths && (
+                                <p className="text-danger">{formik.errors.numberOfBirths}</p>
+                            )}
                     </div>
+
                     {birthEntries.map((entry, index) => (
-    <div key={index} className="input-box">
-        <label className="label" htmlFor={`tagId-${index}`}>Calf Tag ID {index + 1}</label>
-        <input
-            value={entry.tagId}
-            onChange={(e) => handleBirthEntriesChange(e, index)}
-            placeholder="Enter Calf Tag ID"
-            id={`tagId-${index}`}
-            name="tagId"
-            type="text"
-            className="input2"
-        />
+                        <div key={index} className="input-box">
+                            <label className="label" htmlFor={`tagId-${index}`}>
+                                Calf Tag ID {index + 1}
+                            </label>
+                            <input
+                                value={entry.tagId}
+                                onChange={(e) => handleBirthEntriesChange(e, index)}
+                                placeholder="Enter Calf Tag ID"
+                                id={`tagId-${index}`}
+                                name="tagId"
+                                type="text"
+                                className="input2"
+                            />
 
-        <label className="label" htmlFor={`gender-${index}`}>Gender {index + 1}</label>
-        <input
-            value={entry.gender}
-            onChange={(e) => handleBirthEntriesChange(e, index)}
-            placeholder="Enter Gender"
-            id={`gender-${index}`}
-            name="gender"
-            type="text"
-            className="input2"
-        />
+                            <label className="label" htmlFor={`gender-${index}`}>
+                                Gender {index + 1}
+                            </label>
+                            <input
+                                value={entry.gender}
+                                onChange={(e) => handleBirthEntriesChange(e, index)}
+                                placeholder="Enter Gender"
+                                id={`gender-${index}`}
+                                name="gender"
+                                type="text"
+                                className="input2"
+                            />
 
-        <label className="label" htmlFor={`birthweight-${index}`}>Birth Weight {index + 1}</label>
-        <input
-            value={entry.birthweight}
-            onChange={(e) => handleBirthEntriesChange(e, index)}
-            placeholder="Enter Birth Weight"
-            id={`birthweight-${index}`}
-            name="birthweight"
-            type="number"
-            className="input2"
-        />
-    </div>
-))}
+                            <label className="label" htmlFor={`birthweight-${index}`}>
+                                Birth Weight {index + 1}
+                            </label>
+                            <input
+                                value={entry.birthweight}
+                                onChange={(e) => handleBirthEntriesChange(e, index)}
+                                placeholder="Enter Birth Weight"
+                                id={`birthweight-${index}`}
+                                name="birthweight"
+                                type="number"
+                                className="input2"
+                            />
+                        </div>
+                    ))}
 
                 </div>
             </form>

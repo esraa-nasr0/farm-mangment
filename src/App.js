@@ -2,7 +2,6 @@ import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./Components/Layout/Layout";
 import Home from "./Components/Home/Home";
-import About from "./Components/About/About";
 import Login from "./Components/Login/Login";
 import Register from "./Components/Register/Register";
 import Animals from "./Components/Animals/Animals";
@@ -36,7 +35,12 @@ import Vaccinebylocationshed from "./Components/Vaccine/Vaccinebylocationshed.js
 import VaccineanimalContextProvider from "./Context/VaccineanimalContext.js";
 import VaccineTable from "./Components/Vaccine/VaccineTable.jsx";
 import EditVaccine from "./Components/Vaccine/EditVaccine.jsx";
-// import UploadExcel from "./Components/Animals/UploadExcel.jsx";
+import HomeServices from "./Components/Home/HomeServices.jsx";
+import ExclutedContextProvider from "./Context/ExclutedContext.js";
+import Excluted from "./Components/Excluted/Excluted.jsx";
+import Exclutedtable from "./Components/Excluted/ExclutedTable.jsx";
+import EditExcluted from "./Components/Excluted/EditExcluted.jsx";
+
 
 
 let routers = createBrowserRouter([
@@ -45,9 +49,13 @@ let routers = createBrowserRouter([
     element: <Layout />, 
     children: [
       { index: true, element: <ProtectedRoute><Home/></ProtectedRoute> },
-      { path: "about", element: <ProtectedRoute><About/></ProtectedRoute> },
+      { path: "homeServices", element: <ProtectedRoute><HomeServices/></ProtectedRoute> },
       { path: "report", element: <ProtectedRoute><Report/></ProtectedRoute> },
       { path: "reportDaliy", element: <ProtectedRoute><ReportDaliy/></ProtectedRoute> },
+      { path: "excluted", element: <ProtectedRoute><Excluted/></ProtectedRoute> },
+      { path: "exclutedtable", element: <ProtectedRoute><Exclutedtable/></ProtectedRoute> },
+      { path: "editExcluted/:id", element: <ProtectedRoute><EditExcluted/></ProtectedRoute> },
+
       { path: "login", element: <Login /> },
       { path: "verifyotp", element: <Verifyotp /> },
       { path: "forgetpassword", element: <Forgetpassword /> },
@@ -90,6 +98,7 @@ export default function App() {
   },[]);
 
   return <>
+  <ExclutedContextProvider>
   <VaccineanimalContextProvider>
   <GetAnimalContextProvider>
   <BreadingcontextProvider>
@@ -105,6 +114,7 @@ export default function App() {
   </BreadingcontextProvider>
   </GetAnimalContextProvider>
   </VaccineanimalContextProvider>
+  </ExclutedContextProvider>
   </>
 }
 

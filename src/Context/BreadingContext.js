@@ -6,28 +6,33 @@ export let Breadingcontext = createContext();
 let Authorization = localStorage.getItem('Authorization');
 
 let headers = {
-    Authorization: `Bearer ${Authorization}`,
+    Authorization:` Bearer ${Authorization}`
 };
 
-function getallbreading() {
-    return axios.get(`https://farm-project-bbzj.onrender.com/api/breeding/GetAllBreeding`, { headers })
+// Function to get all breeding entries with pagination and optional filters
+function getAllBreeding(page, limit, filters = {}) {
+    return axios.get('https://farm-project-bbzj.onrender.com/api/breeding/GetAllBreeding', {
+        params: {
+            page,
+            limit,
+            ...filters 
+        },
+        headers
+    })
+    .then((response) => response)
+    .catch((err) => err);
+}
+
+// Function to delete a breeding entry by ID
+export function deleteBreeding(id) {
+    return axios.delete(`https://farm-project-bbzj.onrender.com/api/breeding/DeleteBreeding/${id}`, { headers })
         .then((response) => response)
         .catch((err) => err);
 }
-export function Deletbreading(id) {
-    return axios.delete(`https://farm-project-bbzj.onrender.com/api/breeding/DeleteBreeding/${id}`, { headers })
-        .then((response) => response)
-        .catch((err) => {
-            console.error("Error deleting breeding:", err.response || err);
-            return err;
-        });
-}
 
-
-
-export default function BreadingcontextProvider(props) {
+export default function BreadingContextProvider(props) {
     return (
-        <Breadingcontext.Provider value={{ getallbreading ,Deletbreading }}>
+        <Breadingcontext.Provider value={{ getAllBreeding, deleteBreeding }}>
             {props.children}
         </Breadingcontext.Provider>
     );
